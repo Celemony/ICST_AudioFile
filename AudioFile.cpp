@@ -978,16 +978,16 @@ float* AudioFile::GetSafePt(unsigned int channel, bool lock)
 }
 
 // return array size in frames (samples / channels)
-unsigned int AudioFile::GetSize() {return size;}
+unsigned int AudioFile::GetSize() const {return size;}
 
 // return sample rate in Hz
-unsigned int AudioFile::GetRate() {return rate;}
+unsigned int AudioFile::GetRate() const {return rate;}
 
 // return resolution in bits
-unsigned int AudioFile::GetResolution() {return (unsigned int)resolution;}
+unsigned int AudioFile::GetResolution() const {return (unsigned int)resolution;}
 
 // return number of channels
-unsigned int AudioFile::GetChannels() {return (unsigned int)channels;}
+unsigned int AudioFile::GetChannels() const {return (unsigned int)channels;}
 
 //******************************
 //* auxiliary

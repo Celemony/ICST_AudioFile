@@ -95,10 +95,10 @@ public:
 	int SaveWave(char *filename);		// save as WAVE file (16 bit audio is saved 
 										// as extensible if channels > 2)
 	int AppendWave(char *filename);		// append to existing WAVE file
-	unsigned int GetSize();				// return size in frames
-	unsigned int GetRate();				// return sample rate in Hz
-	unsigned int GetChannels();			// return number of channels
-	unsigned int GetResolution();		// return resolution in bits
+	unsigned int GetSize() const;		// return size in frames
+	unsigned int GetRate() const;		// return sample rate in Hz
+	unsigned int GetChannels() const;	// return number of channels
+	unsigned int GetResolution() const;	// return resolution in bits
 	unsigned int GetSpkPos();			// return speaker positions
 	float* GetSafePt(					// return pointer to audio data or NULL
 		unsigned int channel=0,			// 0..channels-1
