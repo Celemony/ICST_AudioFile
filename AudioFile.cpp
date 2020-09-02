@@ -115,7 +115,7 @@ int AudioFile::Create(unsigned int nsize, unsigned int nchannels,
 //* file load operations
 //*
 // load file, determine format automatically
-int AudioFile::Load(char *filename, unsigned int offset, unsigned int frames, 
+int AudioFile::Load(const char *filename, unsigned int offset, unsigned int frames, 
 					bool nodata)
 {
 	// open file
@@ -494,7 +494,7 @@ int AudioFile::LoadAiff(unsigned int offset, unsigned int frames, bool nodata)
 }
 
 // load raw file as audio
-int AudioFile::LoadRaw(char *filename,	unsigned int offset, unsigned int frames,
+int AudioFile::LoadRaw(const char *filename,	unsigned int offset, unsigned int frames,
 			unsigned int nchannels, unsigned int nresolution, unsigned int nrate, 
 			unsigned int nspkpos, bool format, bool bigendian)
 {
@@ -693,7 +693,7 @@ int AudioFile::LoadRaw(char *filename,	unsigned int offset, unsigned int frames,
 //* file save operations
 //*
 // save audio data to WAVE file
-int AudioFile::SaveWave(char *filename)
+int AudioFile::SaveWave(const char *filename)
 {
 	// prepare
 	if ((!safe) && (size>0)) return NODATA;					// allow 0 audio frames
@@ -817,7 +817,7 @@ int AudioFile::SaveWave(char *filename)
 }
 
 // append audio data to existing WAVE file
-int AudioFile::AppendWave(char *filename)
+int AudioFile::AppendWave(const char *filename)
 {
 	unsigned int data32, oldallcsize, oldsize, oldbytesperword, written=0;
 	unsigned int bytesperword = __min(4,__max(2,(resolution+7)/8));

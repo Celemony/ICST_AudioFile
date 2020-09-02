@@ -77,13 +77,13 @@ public:
 		unsigned int nresolution=16,	// resolution in bit
 		unsigned int nrate=44100,		// sample rate in Hz
 		unsigned int nspkpos=0 );		// speaker positions (see above)
-	int Load(	char *filename,			// load file, determine format automatically
+	int Load(	const char *filename,	// load file, determine format automatically
 				unsigned int offset=0,	// frame offset for reading audio data
 				unsigned int frames=0,	// number of frames to read (0: all)
 				bool nodata=false );	// t: read properties only (an existing
 										// audio buffer will be deleted)
 	int LoadRaw(						// load raw file as audio
-		char *filename,					// see Create and Load for parameters
+		const char *filename,			// see Create and Load for parameters
 		unsigned int offset=0,			//
 		unsigned int frames=0,			//
 		unsigned int nchannels=1,		// nresolution:
@@ -92,9 +92,9 @@ public:
 		unsigned int nspkpos=0,			// float(format=true)
 		bool format=false,				// 
 		bool bigendian=false );			// t: data interpreted as big endian
-	int SaveWave(char *filename);		// save as WAVE file (16 bit audio is saved 
+	int SaveWave(const char *filename);	// save as WAVE file (16 bit audio is saved 
 										// as extensible if channels > 2)
-	int AppendWave(char *filename);		// append to existing WAVE file
+	int AppendWave(const char *filename);// append to existing WAVE file
 	unsigned int GetSize() const;		// return size in frames
 	unsigned int GetRate() const;		// return sample rate in Hz
 	unsigned int GetChannels() const;	// return number of channels
