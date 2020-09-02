@@ -106,6 +106,10 @@ public:
 										// properties remain unchanged until next
 										// call with false, locks Create/Load(Raw)
 										// in a wait state during this time!							
+	const unsigned char* GetiXMLData (	// return iXML chunk data bytes
+		unsigned int* dataLength) const;
+	void SetiXMLData (					// set/clear iXML chunk data bytes
+		const unsigned char* data, unsigned int dataLength);
 private:								//*** see AudioFile.cpp for details	***	
 	FILE* file;									
 	float* audio;						
@@ -125,6 +129,8 @@ private:								//*** see AudioFile.cpp for details	***
 	bool GotoChunk(unsigned int tag, bool bigendian);
 	AudioFile& operator = (const AudioFile& src);
 	AudioFile(const AudioFile& src);
+	unsigned char* iXMLData;
+	unsigned int iXMLDataSize;
 };
 
 }	// end library specific namespace

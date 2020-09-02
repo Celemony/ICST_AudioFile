@@ -11,6 +11,7 @@
 #include "AudioFile.h"
 #include "MathDefs.h"
 #include <climits>
+#include <cstring>
 #include <utility>
 
 #ifdef _WIN32	// Windows specific
@@ -39,6 +40,7 @@
 #define F_F32 0x32336c66 						// supported AIFF data compression
 #define F_F32CSND 0x32334c46					// tags: NONE, float (std + CSound)
 #define F_NONE 0x454e4f4e						//
+#define T_IXML 0x4C4D5869						// http://www.ixml.info/
 
 namespace icstdsp {		// begin library specific namespace
 
@@ -65,6 +67,8 @@ AudioFile::AudioFile()
 	resolution = 0;						// resolution in bit
 	channels = 0;						// number of channels
 	spkpos = 0;							// speaker positions
+	iXMLData = NULL;					// iXML data
+	iXMLDataSize = 0;					// iXML data size
 }
 
 AudioFile::AudioFile (AudioFile&& src)
@@ -84,12 +88,15 @@ AudioFile& AudioFile::operator = (AudioFile&& src)
 	std::swap(spkpos, src.spkpos);
 	std::swap(resolution, src.resolution);
 	std::swap(channels, src.channels);
+	std::swap(iXMLData, src.iXMLData);
+	std::swap(iXMLDataSize, src.iXMLDataSize);
 	return *this;
 }
 
 AudioFile::~AudioFile() 
 {
 	if (audio) {delete[] audio;}
+	SetiXMLData(NULL, 0);
 }
 
 // create new audio file
@@ -297,6 +304,16 @@ int AudioFile::LoadWave(unsigned int offset, unsigned int frames, bool nodata)
 	}
 	else {return NOSUPPORT;}
 
+	SetiXMLData(NULL, 0);
+	if (GotoChunk(T_IXML, false))
+	{
+		fread(&chunksize, sizeof(int), 1, file);
+		try {iXMLData = new unsigned char[chunksize];} catch(...) {iXMLData = NULL;}
+		if (iXMLData == NULL) {return NOMEMORY;}
+		fread(iXMLData, 1, chunksize, file);
+		iXMLDataSize = chunksize;
+	}
+
 	// update properties and clean up
 	size = psize; resolution = presolution; channels = pchannels; rate = prate;
 	spkpos = pspkpos;
@@ -337,6 +354,16 @@ int AudioFile::LoadAiff(unsigned int offset, unsigned int frames, bool nodata)
 	if ((presolution == 0) || (pchannels == 0)) {return CORRUPT;}
 	bytesperword = 1 + (presolution-1)/8;
 	
+	SetiXMLData(NULL, 0);
+	if (GotoChunk(T_IXML, false))
+	{
+		fread(&chunksize, sizeof(int), 1, file);
+		try {iXMLData = new unsigned char[chunksize];} catch(...) {iXMLData = NULL;}
+		if (iXMLData == NULL) {return NOMEMORY;}
+		fread(iXMLData, 1, chunksize, file);
+		iXMLDataSize = chunksize;
+	}
+
 	// go back to the end of the form chunk and start searching for a 
 	// sound data chunk skipping other chunks, jump to start of audio data,
 	// AIFF files without audio data do not require a sound chunk
@@ -715,6 +742,8 @@ int AudioFile::SaveWave(const char *filename)
 	else {allcsize = 36 + audiobytes + fill; fmtcsize = 16;}
 	if (bytesperword > 3) {usefloat = true;}
 
+	if (iXMLData) allcsize += (8 + iXMLDataSize) + (iXMLDataSize % 2);
+
 	// open file
 	if (filename[0] == 0) return NOFILE;
 	if ((file = fopen(filename,"wb")) == NULL) return NOFILE;
@@ -809,6 +838,14 @@ int AudioFile::SaveWave(const char *filename)
 		if (fwrite(buf,sizeof(float),nofsamples,file) != nofsamples) {
 			delete[] buf; fclose(file); remove(filename); return UNSAVED;}
 		delete[] buf;
+	}
+
+	if (iXMLData)
+	{
+		data32 = T_IXML; fwrite(&data32, sizeof (int), 1, file);
+		data32 = iXMLDataSize; fwrite(&data32, sizeof (int), 1, file);
+		fwrite(iXMLData, 1, data32, file);
+		if (iXMLDataSize % 2) { const char space = ' '; fwrite(&space, 1, 1, file); }
 	}
 
 	// clean up
@@ -975,6 +1012,23 @@ float* AudioFile::GetSafePt(unsigned int channel, bool lock)
 		if (!safe) {locked = false; return NULL;}
 	}
 	return audio + channel*size;
+}
+
+// return iXML chunk data bytes
+const unsigned char* AudioFile::GetiXMLData(unsigned int* dataLength) const
+{
+	*dataLength = iXMLDataSize;
+	return iXMLData;
+}
+
+// set/clear iXML chunk data bytes
+void AudioFile::SetiXMLData(const unsigned char* data, unsigned int dataLength)
+{
+	if (iXMLData) {delete[] iXMLData;}
+	try {iXMLData = new unsigned char[dataLength];} catch(...) {iXMLData = NULL;}
+	if (iXMLData == NULL) {iXMLDataSize = 0; return;}
+	memcpy(iXMLData, data, dataLength);
+	iXMLDataSize = dataLength;
 }
 
 // return array size in frames (samples / channels)
