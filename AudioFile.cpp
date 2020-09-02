@@ -11,6 +11,7 @@
 #include "AudioFile.h"
 #include "MathDefs.h"
 #include <climits>
+#include <utility>
 
 #ifdef _WIN32	// Windows specific
 	#ifndef ICSTLIB_ENABLE_MFC
@@ -64,6 +65,26 @@ AudioFile::AudioFile()
 	resolution = 0;						// resolution in bit
 	channels = 0;						// number of channels
 	spkpos = 0;							// speaker positions
+}
+
+AudioFile::AudioFile (AudioFile&& src)
+	: AudioFile()
+{
+	*this = std::move (src);
+}
+
+AudioFile& AudioFile::operator = (AudioFile&& src)
+{
+	std::swap(file, src.file);
+	std::swap(audio, src.audio);
+	std::swap(safe, src.safe);
+	std::swap(locked, src.locked);
+	std::swap(size, src.size);
+	std::swap(rate, src.rate);
+	std::swap(spkpos, src.spkpos);
+	std::swap(resolution, src.resolution);
+	std::swap(channels, src.channels);
+	return *this;
 }
 
 AudioFile::~AudioFile() 

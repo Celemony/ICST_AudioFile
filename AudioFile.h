@@ -69,6 +69,8 @@ class AudioFile
 public:
 	AudioFile();
 	~AudioFile();
+	AudioFile(AudioFile&& src);
+	AudioFile& operator =(AudioFile&& src);
 	int Create(							// create new audio file
 		unsigned int nsize=0,			// size in frames (samples/channels)
 		unsigned int nchannels=1,		// number of channels
