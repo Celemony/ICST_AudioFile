@@ -7,7 +7,7 @@
 // Celemony Software GmbH has extended this version of the ICST DSP Library
 // to read and write iXML data chunks in audio files.
 
-#include "common.h"
+#include "Common.h"
 #include "AudioFile.h"
 #include "MathDefs.h"
 #include <climits>
