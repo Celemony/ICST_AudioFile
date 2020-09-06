@@ -3,6 +3,9 @@
 // This code is part of the ICST DSP Library version 1.2. It is released
 // under the 2-clause BSD license. Copyright (c) 2008-2010, Zurich
 // University of the Arts, Beat Frei. All rights reserved.
+// 
+// Celemony Software GmbH has extended this version of the ICST DSP Library
+// to read and write iXML data chunks in audio files.
 
 #include "common.h"
 #include "AudioFile.h"
