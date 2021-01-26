@@ -23,7 +23,10 @@
 #include <cstdio>
 #include <cstdlib>
 #ifndef ICSTLIB_NO_SSEOPT 	
+	#if (defined(_M_IX86_FP) && (_M_IX86_FP >= 2)) || \
+		(defined(__SSE2__) && __SSE2__)
 	#include <emmintrin.h>	// SSE2 intrinsics
+	#endif
 #endif
 #ifdef _WIN32
 	#ifndef NOMINMAX		// no max/min macros are defined when
